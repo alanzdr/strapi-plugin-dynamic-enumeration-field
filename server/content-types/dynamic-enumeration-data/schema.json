@@ -1,0 +1,38 @@
+{
+  "kind": "collectionType",
+  "collectionName": "plugin-dynamic-enumerations-data",
+  "info": {
+    "singularName": "dynamic-enumeration-data",
+    "pluralName": "dynamic-enumerations-data",
+    "displayName": "Dynamic Enumerations Data",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": false
+    },
+    "content-type-builder": {
+      "visible": false
+    },
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "uid": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "values": {
+      "type": "json",
+      "required": true
+    }
+  }
+}
