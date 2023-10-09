@@ -2,11 +2,11 @@
   <img src=".github/logo.png" width="200" alt="Dynamic Enumeration logo">
 </p>
 
-<h1 align="center">Storage Cookies</h1>
+<h1 align="center">Dynamic Enumeration</h1>
 
 <p align="center">
   <a href="#-features">Features</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-installation">Installation is</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-installation">Installation</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#memo-license">License</a>
 </p>
 
