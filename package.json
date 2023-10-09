@@ -27,6 +27,10 @@
     "react-router-dom": "^5.3.4",
     "styled-components": "^5.3.6"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alanzdr/strapi-plugin-dynamic-enumeration-field.git"
+  },
   "author": {
     "name": "Alanderson Zelindro da Rosa",
     "url": "https://github.com/alanzdr"
