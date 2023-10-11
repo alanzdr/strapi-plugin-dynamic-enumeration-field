@@ -1,80 +1,74 @@
-import { useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFetchClient } from '@strapi/helper-plugin';
 
 import CONSTANTS from '../constants';
-import useLocale from './use-locale';
+import { getFieldState } from '../reducers';
 
 const useEnumerationData = (field) => {
-  const locale = useLocale()
-  const [fieldValues, setFieldValues] = useState([])
-
-  const [isLoading, setIsLoading] = useState(false)
-  const [isLoaded, setIsLoaded] = useState(false)
-
   const dispatch = useDispatch();
-  const reduxState = useSelector((state) => state[CONSTANTS.REDUCER]);
+  const state = useSelector((state) => getFieldState(state, field));
 
   const fetchClient = useFetchClient()
 
   const loadData = useCallback(
     async () => {
-      setIsLoading(true)
+      dispatch({
+        type: CONSTANTS.REDUCER_LOADING_VALUES,
+        data: {
+          field
+        }
+      })
 
       try {
         const response = await fetchClient.get(CONSTANTS.API_FIELD_OPTIONS, {
-          params: {
-            ...field,
-            locale
-          }
+          params: field
         })
 
         dispatch({
-          type: CONSTANTS.REDUCER_LOAD_VALUES,
+          type: CONSTANTS.REDUCER_LOADED_VALUES,
           data: {
-            ...field,
+            field,
             values: response.data
           }
         })
       } catch (error) {
         console.error(error)
-      } finally {
-        setIsLoaded(true)
-        setIsLoading(false)
+        dispatch({
+          type: CONSTANTS.REDUCER_LOADED_VALUES,
+          data: {
+            field,
+            values: []
+          }
+        })
       }
     },
-    [fetchClient, field, locale],
+    [fetchClient, field],
   )
 
   useEffect(() => {
-    if (isLoading || !field) {
+    if (state.isLoading || state.isLoaded) {
       return;
     }
 
-    const { uid, name } = field
-    const currentValues = reduxState?.fields?.[uid]?.[name]
-
-    if (!currentValues && !isLoaded) {
+    if (!state.values) {
       loadData();
-    } else if (Array.isArray(currentValues)) {
-      setFieldValues(currentValues)
     }
-  }, [reduxState, field, isLoading, isLoaded]);
+  }, [state, field, loadData]);
 
   const addNewValue = useCallback((value) => {
     dispatch({
       type: CONSTANTS.REDUCER_ADD_VALUE,
       data: {
-        ...field,
+        field,
         value
       }
     })
-  }, [])
+  }, [field])
 
   return {
-    values: fieldValues,
-    addValue: addNewValue,
-    isLoading
+    values: state.values || [],
+    addValue: addNewValue
   }
 };
 

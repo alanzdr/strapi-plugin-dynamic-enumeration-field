@@ -11,7 +11,8 @@ const FIELD_FULL_NAME = `plugin::${ID}.${FIELD_NAME}`
 
 // Frontend Constants
 const REDUCER_ADD_VALUE = ID + '/add-field'
-const REDUCER_LOAD_VALUES = ID + '/update-fieldd'
+const REDUCER_LOADING_VALUES = ID + '/set-loading-values'
+const REDUCER_LOADED_VALUES = ID + '/update-field'
 const API_FIELD_OPTIONS = `${ID}/get-field-options`
 
 module.exports = {
@@ -25,6 +26,7 @@ module.exports = {
   FIELD_FULL_NAME,
   REDUCER: ID,
   REDUCER_ADD_VALUE,
-  REDUCER_LOAD_VALUES,
+  REDUCER_LOADED_VALUES,
+  REDUCER_LOADING_VALUES,
   API_FIELD_OPTIONS
 }
