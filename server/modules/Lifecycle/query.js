@@ -1,4 +1,4 @@
-const CONSTANTS = require('../../config/constants') 
+const CONSTANTS = require('../../constants') 
 
 function LifecycleQuery ({
   strapi, 
@@ -6,29 +6,29 @@ function LifecycleQuery ({
   fieldNames,
   attributes
 }) {
-  // Pluggin Service
+  // Provider Service
   const provider = strapi.service(CONSTANTS.PROVIDER)
-  //
-
-  //
+  // i18n pluggin support
   const hasLocale = attributes.locale != null
   const select = hasLocale ? [...fieldNames, 'locale'] : fieldNames
-  //
-
-  //
+  
+  // Find one in current API data
   const apiFindOne = async (where) => {
     return await strapi.db.query(uid).findOne({
       select,
       where
     });
   }
-  //
+
+  // Find many in current API data
   const apiFindMany = async (where) => {
     return await strapi.db.query(uid).findMany({
       select,
       where
     });
   }
+
+  // Get Enumeration data
   const getEnumeration = async (name, locale) => {
     const options = attributes[name]?.options
 
@@ -59,7 +59,8 @@ function LifecycleQuery ({
       ...(locale ? { locale } : {})
     })
   }
-  // Create new enumeration
+
+  // Update enumeration
   const updateEnumeration = async (id, values) => {
     await provider.updateValues(id, values)
   }

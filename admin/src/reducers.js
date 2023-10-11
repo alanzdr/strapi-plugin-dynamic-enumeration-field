@@ -1,21 +1,16 @@
 import produce from 'immer';
-import pluginId from './pluginId';
+import CONSTANTS from './constants';
 
-export const REDUCERS = {
-  ID: pluginId,
-  ADD_VALUE: pluginId + '/add-field',
-  ON_LOAD_VALUES: pluginId + '/update-fieldd'
-}
 
 const initialState = {
   fields: {}
 };
 
 export default {
-  [REDUCERS.ID]: produce((previousState, action) => {
+  [CONSTANTS.REDUCER]: produce((previousState, action) => {
     let state = previousState ?? initialState
 
-    if (action.type === REDUCERS.ADD_VALUE) {
+    if (action.type === CONSTANTS.REDUCER_ADD_VALUE) {
       const { uid, name, value } = action.data
       
       if (!uid || !name) {
@@ -36,7 +31,7 @@ export default {
       }
     }
 
-    if (action.type === REDUCERS.ON_LOAD_VALUES) {
+    if (action.type === CONSTANTS.REDUCER_LOAD_VALUES) {
       const { uid, name, values } = action.data
       
       if (!uid || !name) {

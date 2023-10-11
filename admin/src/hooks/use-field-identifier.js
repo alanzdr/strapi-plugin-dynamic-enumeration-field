@@ -1,13 +1,13 @@
 import React from "react"
 
-import pluginId from '../pluginId';
+import CONSTANTS from '../constants';
 
 function useFieldIdentifier ({contentType, currentData, apiUid, name, options}) {
   const nameParts = name.split('.')
 
   if (options && options.global) {
     return {
-      uid: `plugin::${pluginId}.globals`,
+      uid: CONSTANTS.GLOBALS_UID,
       name: options.global
     }
   }

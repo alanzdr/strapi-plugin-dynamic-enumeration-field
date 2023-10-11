@@ -1,4 +1,4 @@
-const CONSTANTS = require("../../config/constants")
+const CONSTANTS = require("../../constants")
 
 const LifecycleHandle = ({
   query,

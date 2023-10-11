@@ -13,3 +13,6 @@ yarn.lock
 !.yarn/sdks
 !.yarn/versions
 *.log
+
+.github
+.github/*

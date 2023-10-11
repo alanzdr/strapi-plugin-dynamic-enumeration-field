@@ -1,64 +1,32 @@
-
-import pluginId from './pluginId';
-
 import Icon from './components/Icon'
 import reducers from './reducers';
-import { getPluginConfig } from './service/config';
+import { getGlobalOptions } from './service/globals';
+
+import CONSTANTS from './constants'
 
 export default {  
   async register(app) {
     app.addReducers(reducers);
-
-    const pluginConfig = await getPluginConfig()
-
     app.registerPlugin({
-      id: pluginId,
+      id: CONSTANTS.ID,
       isReady: true,
       name: "Dynamic Enumeration",
     });
-
-    const getGlobalOptions = () => {
-      try {
-        const globalOptions = pluginConfig?.globals;
-
-        if (!globalOptions) {
-          return [];
-        }
-
-        const entries = Object.entries(globalOptions);
-
-        if (!entries || !entries.length) {
-          return [];
-        }
-
-        return entries.map(([key, value]) => ({
-          key,
-          value: key,
-          metadatas: {
-            intlLabel: {
-              id: pluginId + ".globals." + key,
-              defaultMessage: value.name || key,
-            },
-          }
-        }));
-      } catch (error) {
-        console.error(error);
-        return [];
-      }
-    }
+    
+    const globalOptions = await getGlobalOptions()
 
     app.customFields.register({
-      name: "dynamic-field",
+      name: CONSTANTS.FIELD_NAME,
       type: "string",
-      pluginId,
+      pluginId: CONSTANTS.ID,
       icon: Icon,
       intlLabel: {
-        id: pluginId + ".label",
+        id: CONSTANTS.ID + ".label",
         defaultMessage: "Dynamic Enumeration",
       },
       intlDescription: {
-        id: pluginId + ".description",
-        defaultMessage: "User can add new values to the enumeration",
+        id: CONSTANTS.ID + ".description",
+        defaultMessage: "Text input with dynamic enumeration values, which can be added according to use",
       },
       components: {
         Input: async () => import("./components/Input"),
@@ -73,16 +41,16 @@ export default {
                 name: "options.global",
                 type: "select",
                 intlLabel: {
-                  id: pluginId + ".global.label",
+                  id: CONSTANTS.ID + ".global.label",
                   defaultMessage: "Global Options",
                 },
                 description: {
-                  id: pluginId + ".global.description",
+                  id: CONSTANTS.ID + ".global.description",
                   defaultMessage:
-                    "Global options have values available for all content types. Global options are added in the plugin settings file",
+                    "Global options have values available for all content types. Global options are added in the plugin settings file.",
                 },
                 value: "",
-                options: getGlobalOptions(),
+                options: globalOptions,
               },
             ],
           },

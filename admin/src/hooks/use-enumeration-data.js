@@ -2,9 +2,7 @@ import { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFetchClient } from '@strapi/helper-plugin';
 
-import { REDUCERS } from '../reducers'
-
-import pluginId from '../pluginId';
+import CONSTANTS from '../constants';
 import useLocale from './use-locale';
 
 const useEnumerationData = (field) => {
@@ -15,7 +13,7 @@ const useEnumerationData = (field) => {
   const [isLoaded, setIsLoaded] = useState(false)
 
   const dispatch = useDispatch();
-  const reduxState = useSelector((state) => state[REDUCERS.ID]);
+  const reduxState = useSelector((state) => state[CONSTANTS.REDUCER]);
 
   const fetchClient = useFetchClient()
 
@@ -24,7 +22,7 @@ const useEnumerationData = (field) => {
       setIsLoading(true)
 
       try {
-        const response = await fetchClient.get(`${pluginId}/get-field-options`, {
+        const response = await fetchClient.get(CONSTANTS.API_FIELD_OPTIONS, {
           params: {
             ...field,
             locale
@@ -32,7 +30,7 @@ const useEnumerationData = (field) => {
         })
 
         dispatch({
-          type: REDUCERS.ON_LOAD_VALUES,
+          type: CONSTANTS.REDUCER_LOAD_VALUES,
           data: {
             ...field,
             values: response.data
@@ -65,7 +63,7 @@ const useEnumerationData = (field) => {
 
   const addNewValue = useCallback((value) => {
     dispatch({
-      type: REDUCERS.ADD_VALUE,
+      type: CONSTANTS.REDUCER_ADD_VALUE,
       data: {
         ...field,
         value

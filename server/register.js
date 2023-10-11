@@ -1,20 +1,29 @@
 'use strict';
 
-const CONSTANTS = require("./config/constants");
+const CONSTANTS = require("./constants");
+
+async function setEnumerationVisibility (strapi) {
+  const config = await strapi.config.get(CONSTANTS.CONFIGS);
+  if (!config.contentTypeVisible) {
+    return
+  }
+
+  const contentType = strapi.contentType(CONSTANTS.ENUMERATION_CONTENT_TYPE)
+  contentType.pluginOptions = {
+    ...contentType.pluginOptions,
+    'content-manager': { visible: true },
+    'content-type-builder': { visible: true },
+  }
+}
 
 module.exports = async ({ strapi }) => {
+  // Register custom field
   strapi.customFields.register({
-    name: "dynamic-field",
+    name: CONSTANTS.FIELD_NAME,
     plugin: CONSTANTS.ID,
     type: "string",
   });
 
-  const config = await strapi.config.get(CONSTANTS.CONFIGS);
-  const contentType = strapi.contentType(CONSTANTS.CONTENT_TYPE)
-
-  contentType.pluginOptions = {
-    ...contentType.pluginOptions,
-    'content-manager': { visible: !!config.contentTypeVisible },
-    'content-type-builder': { visible: !!config.contentTypeVisible },
-  }
+  // Set Enumeration Content Type Visibility if setted 
+  await setEnumerationVisibility(strapi)
 };

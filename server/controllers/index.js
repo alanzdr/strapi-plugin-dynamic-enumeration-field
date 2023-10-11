@@ -1,7 +1,7 @@
 'use strict';
 
 const PROVIDER_UID = 'plugin::dynamic-enumeration.dynamic-enumeration-provider'
-const CONSTANTS = require('../config/constants') 
+const CONSTANTS = require('../constants') 
 
 const dynamicEnumController = ({strapi}) => ({
   async getConfig () {
@@ -85,7 +85,6 @@ const dynamicEnumController = ({strapi}) => ({
     }
   },
   
-
 })
 
 module.exports = {
