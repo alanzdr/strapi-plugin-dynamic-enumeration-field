@@ -127,10 +127,10 @@ await fetch(`${API_URL}/api/dynamic-enumeration?uid=${uid}&name=${name}&locale=$
 const SERVICE_UID = 'plugin::dynamic-enumeration.dynamic-enumeration-service'
 const service = strapi.service(SERVICE_UID)
 const data = await service.getValues({
-        uid,
-        name,
-        locale // Optional
-      })
+  uid,
+  name,
+  locale // Optional
+})
 
 ```
 
@@ -169,9 +169,9 @@ await fetch(`${API_URL}/api/dynamic-enumeration/globals?key=my-field`);
 const SERVICE_UID = 'plugin::dynamic-enumeration.dynamic-enumeration-service'
 const service = strapi.service(SERVICE_UID)
 const data = await service.getGlobalValues({
-        key: 'my-field',
-        locale // Optional
-      })
+  key: 'my-field',
+  locale // Optional
+})
 
 ```
 
