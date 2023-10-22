@@ -8,6 +8,10 @@
   <a href="#-introduction">Introduction</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#-features">Features</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#-installation">Installation</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-configuration">Configuration
+</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+  <a href="#-api">Api
+</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#memo-license">License</a>
 </p>
 
@@ -19,7 +23,8 @@
 
 This plugin adds a new type of enumeration that works like a combobox, where you can get data already registered in the enumeration previously, or add a new item to select list.
 
-## :tada: Features
+
+## :page_facing_up: Features
 
 - New field `Dynamic Enumeration` appears in admin `content-type-builder` page, in the `custom` tab.
 - Save only registration options and remove options that is not being used.
@@ -27,6 +32,7 @@ This plugin adds a new type of enumeration that works like a combobox, where you
 - Separates each field options by its `API` or `Component`
 - You can create `Globals` fields, which keep the same list between different `API` and `Components`
 - You can load the options in plugin `API` or `Service`. For list the data in your frontend, for example.
+
 
 
 ## :cd: Installation
@@ -45,6 +51,7 @@ pnpm install strapi-plugin-dynamic-enumeration-field
 ```
 
 After that you must add it to your plugin configuration file.
+
 
 ## :wrench: Configuration
 
@@ -91,6 +98,7 @@ module.exports = ({ env }) => ({
   // ...
 });
 ```
+
 
 ## :book: Api
 
@@ -166,6 +174,7 @@ const data = await service.getGlobalValues({
       })
 
 ```
+
 
 ## :memo: License
 
