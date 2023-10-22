@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useFetchClient } from '@strapi/helper-plugin';
 
@@ -8,6 +8,8 @@ import { getFieldState } from '../reducers';
 const useEnumerationData = (field) => {
   const dispatch = useDispatch();
   const state = useSelector((state) => getFieldState(state, field));
+
+  const [isLoading, setLoading] = useState(false)
 
   const fetchClient = useFetchClient()
 
@@ -19,6 +21,7 @@ const useEnumerationData = (field) => {
           field
         }
       })
+      setLoading(true)
 
       try {
         const response = await fetchClient.get(CONSTANTS.API_FIELD_OPTIONS, {
@@ -32,13 +35,13 @@ const useEnumerationData = (field) => {
             values: response.data
           }
         })
+        setLoading(false)
       } catch (error) {
         console.error(error)
         dispatch({
-          type: CONSTANTS.REDUCER_LOADED_VALUES,
+          type: CONSTANTS.REDUCER_RESET,
           data: {
-            field,
-            values: []
+            field
           }
         })
       }
@@ -47,14 +50,10 @@ const useEnumerationData = (field) => {
   )
 
   useEffect(() => {
-    if (state.isLoading || state.isLoaded) {
-      return;
-    }
-
-    if (!state.values) {
+    if (!isLoading && !state.isLoading && !state.isLoaded) {
       loadData();
     }
-  }, [state, field, loadData]);
+  }, [state, isLoading, field, loadData]);
 
   const addNewValue = useCallback((value) => {
     dispatch({

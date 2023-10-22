@@ -63,6 +63,15 @@ export default {
       })
     }
 
+    if (action.type === CONSTANTS.REDUCER_RESET) {
+      const { field } = action.data
+      state = updateFieldState(state, field, {
+        values: [],              
+        isLoading: false,
+        isLoaded: false,
+      })
+    }
+
     if (action.type === 'ContentManager/CrudReducer/SUBMIT_SUCCEEDED') {
       return {}
     }
