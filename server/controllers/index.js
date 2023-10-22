@@ -1,6 +1,7 @@
 'use strict';
 
 const PROVIDER_UID = 'plugin::dynamic-enumeration.dynamic-enumeration-provider'
+const INTERFACE_UID = 'plugin::dynamic-enumeration.dynamic-enumeration-service'
 const CONSTANTS = require('../constants') 
 
 const dynamicEnumController = ({strapi}) => ({
@@ -38,50 +39,32 @@ const dynamicEnumController = ({strapi}) => ({
   async getFieldValues (ctx) {
     const { uid, name, locale } = ctx.request.query
 
-    if (!uid || !name) {
-      return ctx.badRequest('uid and name are required')
-    }
-    
-    const values = await strapi.service(PROVIDER_UID).getEnumerationValues({
-      uid,
-      name,
-      locale
-    })
-
-    const data = values.map(item => item.content)
-
-    return {
-      data
+    try {
+      const data = await strapi.service(INTERFACE_UID).getValues({
+        uid,
+        name,
+        locale
+      })
+      return {
+        data
+      }
+    } catch (error) {
+      ctx.badRequest(error.message)
     }
   },
-  async getGlobalValues ({request}) {
-    const { key, locale } = request.query
+  async getGlobalValues (ctx) {
+    const { key, locale } = ctx.request.query
 
-    if (!key) {
-      return ctx.badRequest('key are required')
-    }
-    
-    const values = await strapi.service(PROVIDER_UID).getEnumerationValues({
-      uid: CONSTANTS.GLOBALS_UID,
-      name: key,
-      locale
-    })
-
-    const options = values.map(item => item.content)
-    const config = await this.getConfig()
-    const defaults = config?.globals?.[key]?.defaults || []
-
-    if (!defaults || !Array.isArray(defaults)) {
-      return options
-    }
-    
-    const data = [...new Set([
-      ...defaults.map(item => String(item)),
-      ...options
-    ])]
-
-    return {
-      data
+    try {
+      const data = await strapi.service(INTERFACE_UID).getGlobalValues({
+        key,
+        locale
+      })
+      return {
+        data
+      }
+    } catch (error) {
+      ctx.badRequest(error.message)
     }
   },
   

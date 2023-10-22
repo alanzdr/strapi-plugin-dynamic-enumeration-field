@@ -11,10 +11,10 @@ const dynamicEnumProvider = ({strapi}) => ({
     });
     return response
   },
-  async getEnumerationValues ({ uid, name, locale }) {
+  async getEnumerationValues ({ uid, name, locale }, createIfNotExists = true) {
     const response = await this.getEnumeration({ uid, name, locale })
 
-    if (!response) {
+    if (!response && createIfNotExists) {
       await this.createData({ uid, name, locale, values: [] })
       return []
     }

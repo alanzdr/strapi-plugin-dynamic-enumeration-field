@@ -25,10 +25,10 @@ const SvgIcon = () => (
   </svg>
 );
 
-const CKEditorIcon = () => (
+const DynamicEnumerationIcon = () => (
   <IconBox justifyContent="center" alignItems="center" width={7} height={6} hasRadius aria-hidden>
     <Icon as={SvgIcon} />
   </IconBox>
 )
 
-export default CKEditorIcon;
+export default DynamicEnumerationIcon;

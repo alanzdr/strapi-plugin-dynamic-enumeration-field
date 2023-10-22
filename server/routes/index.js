@@ -26,12 +26,18 @@ module.exports = {
       {
         method: 'GET',
         path: '/',
-        handler: 'dynamic-enumeration.getFieldValues'
+        handler: 'dynamic-enumeration.getFieldValues',
+        config: {
+          policies: [],
+        },
       },
       {
         method: 'GET',
         path: '/globals',
-        handler: 'dynamic-enumeration.getGlobalValues'
+        handler: 'dynamic-enumeration.getGlobalValues',
+        config: {
+          policies: [],
+        },
       }
     ],
   },
