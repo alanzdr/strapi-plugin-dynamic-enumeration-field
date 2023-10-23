@@ -19,8 +19,13 @@
 
 ## :tada: Introduction
 
-This plugin adds a new type of enumeration that works like a combobox, where you can get data already registered in the enumeration previously, or add a new item to select list.
+This plugin adds a new type of enumeration that works like a combobox, where you can get data already registered in the enumeration previously, or add a new item to the select options.
 
+<p align="center">
+  <img src=".github/example.png" width="907" alt="Dynamic Enumeration example">
+</p>
+
+<br />
 
 ## :page_facing_up: Features
 
@@ -31,7 +36,7 @@ This plugin adds a new type of enumeration that works like a combobox, where you
 - You can create `Globals` fields, which keep the same list between different `API` and `Components`
 - You can load the options in plugin `API` or `Service`. For list the data in your frontend, for example.
 
-
+<br />
 
 ## :cd: Installation
 
@@ -50,6 +55,7 @@ pnpm install strapi-plugin-dynamic-enumeration-field
 
 After that you must add it to your plugin configuration file.
 
+<br />
 
 ## :wrench: Configuration
 
@@ -70,6 +76,8 @@ After that, you'll need to build your admin panel:
 ```sh
 npm run build
 ```
+
+<br />
 
 ### Adding globals field
 
@@ -97,6 +105,7 @@ module.exports = ({ env }) => ({
 });
 ```
 
+<br />
 
 ## :book: Api
 
@@ -173,6 +182,7 @@ const data = await service.getGlobalValues({
 
 ```
 
+<br />
 
 ## :memo: License
 
