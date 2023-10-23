@@ -17,6 +17,8 @@
   <img alt="License" src="https://img.shields.io/static/v1?label=license&message=MIT&color=b40f20&labelColor=000000">
 </p>
 
+<br />
+
 ## :tada: Introduction
 
 This plugin adds a new type of enumeration that works like a combobox, where you can get data already registered in the enumeration previously, or add a new item to the select options.
@@ -76,8 +78,6 @@ After that, you'll need to build your admin panel:
 ```sh
 npm run build
 ```
-
-<br />
 
 ### Adding globals field
 
