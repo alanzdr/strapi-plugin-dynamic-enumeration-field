@@ -16,6 +16,7 @@ module.exports = {
         handler: 'dynamic-enumeration.getConfig',
         config: {
           policies: [],
+          auth: false
         },
       },
     ],
