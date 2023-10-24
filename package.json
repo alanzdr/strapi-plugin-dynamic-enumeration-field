@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-dynamic-enumeration-field",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Custom field to create dynamic enumerations",
   "strapi": {
     "name": "dynamic-enumeration",
