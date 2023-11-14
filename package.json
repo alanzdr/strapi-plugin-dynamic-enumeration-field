@@ -24,7 +24,7 @@
     "@strapi/strapi": "^4.15.0",
     "react": "^17.0.0 || ^18.0.0",
     "react-dom": "^17.0.0 || ^18.0.0",
-    "styled-components": "5.3.3"
+    "styled-components": "^5.3.3"
   },
   "repository": {
     "type": "git",
