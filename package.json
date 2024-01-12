@@ -1,6 +1,6 @@
 {
   "name": "strapi-plugin-dynamic-enumeration-field",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Custom field to create dynamic enumerations",
   "strapi": {
     "name": "dynamic-enumeration",
@@ -9,13 +9,13 @@
     "displayName": "Dynamic Enumeration Field"
   },
   "dependencies": {
-    "@strapi/design-system": "^1.13.0",
-    "@strapi/helper-plugin": "^4.15.0",
-    "@strapi/icons": "^1.13.0",
-    "@strapi/plugin-i18n": "^4.15.0"
+    "@strapi/design-system": "^1.14.1",
+    "@strapi/helper-plugin": "^4.17.0",
+    "@strapi/icons": "^1.14.1",
+    "@strapi/plugin-i18n": "^4.17.0"
   },
   "devDependencies": {
-    "@strapi/strapi": "^4.15.0",
+    "@strapi/strapi": "^4.17.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "styled-components": "5.3.3"
