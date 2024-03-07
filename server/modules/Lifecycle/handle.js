@@ -12,7 +12,7 @@ const LifecycleHandle = ({
       for (const fieldName of fieldNames) {
         const fieldData = data[fieldName]
 
-        if (!fieldData) {
+        if (!fieldData || typeof fieldData !== 'string') {
           continue
         }
 
