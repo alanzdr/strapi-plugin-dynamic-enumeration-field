@@ -3,6 +3,7 @@ const executeLifecycle = require('./execute')
 const EVENTS = [
   'beforeCreate',
   'beforeCreateMany',
+  'afterCreate',
   'beforeUpdate',
   'beforeUpdateMany',
   'beforeDelete',
