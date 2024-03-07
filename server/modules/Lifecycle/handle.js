@@ -43,7 +43,6 @@ const LifecycleHandle = ({
     return this.queue.execute(async () => {
       // Enumerations
       const locale = before.locale
-      // const enumerations = await query.enum.find(locale)
 
       for (const fieldName of fieldNames) {
         const fieldData = current[fieldName]
