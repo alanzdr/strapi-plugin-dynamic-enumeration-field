@@ -163,7 +163,6 @@ async function getCollectionsData (strapi, contentTypes) {
       dynamicData
     )
   }
-  // console.log(inspect(dynamicData, {showHidden: false, depth: null, colors: true}))
 
   return dynamicData
 }
