@@ -32,7 +32,7 @@ function getAttributesFields (
       const componentKey = field.component
       const fullContentType = strapi.components[componentKey]
 
-      if (!fullContentType || !fullContentType.attributes) return
+      if (!fullContentType || !fullContentType.attributes) continue
 
       const componentUid = fullContentType.uid
 
@@ -58,7 +58,7 @@ function getAttributesFields (
       for (const componentKey of components) {
         const fullContentType = strapi.components[componentKey]
 
-        if (!fullContentType || !fullContentType.attributes) return
+        if (!fullContentType || !fullContentType.attributes) continue
 
         const componentUid = fullContentType.uid
         const children = getAttributesFields(componentUid, strapi, fullContentType.attributes, 'component')
@@ -83,7 +83,7 @@ function getContentTypes (strapi) {
   const apis = strapi.container.get('apis').getAll()
   for (const apiKey of Object.keys(apis)) {
     const fullContentType = apis[apiKey].contentTypes[apiKey]
-    if (!fullContentType || !fullContentType.attributes) return
+    if (!fullContentType || !fullContentType.attributes) continue
 
     const fields = getAttributesFields(fullContentType.uid, strapi, fullContentType.attributes)
     const localized = fullContentType.pluginOptions?.i18n?.localized
@@ -94,8 +94,6 @@ function getContentTypes (strapi) {
       localized
     })
   }
-
-  // console.log(inspect(contentTypes, {showHidden: false, depth: null, colors: true}))
 
   return contentTypes
 }
