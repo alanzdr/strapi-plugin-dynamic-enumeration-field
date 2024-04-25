@@ -34,6 +34,27 @@ async function executeLifecycle (event) {
       await handle.onCreate(data) 
       break;
     }
+    case 'afterCreate': {
+      const paramsData = event.params.data
+      const resultData = event.result
+
+      let isClone = true;
+
+      for (const key in paramsData) {
+        const paramsValue = paramsData[key]
+        const resultValue = resultData[key]
+        if (typeof paramsValue === 'string' && typeof resultValue === 'string' && paramsValue === resultValue) {
+          isClone = false
+          break;
+        }
+      }
+
+      if (isClone) {
+        await handle.onCreate(resultData)
+      }
+
+      break;
+    }
     case 'beforeCreateMany': {
       const dataList = event.params.data
       for (const data of dataList) {
