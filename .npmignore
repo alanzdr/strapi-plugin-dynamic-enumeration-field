@@ -16,3 +16,8 @@ yarn.lock
 
 .github
 .github/*
+
+admin
+admin/*
+server
+server/*
