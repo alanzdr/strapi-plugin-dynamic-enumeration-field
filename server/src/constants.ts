@@ -1,6 +1,8 @@
+import { IPluginConfig } from "./types";
+
 const ID = "dynamic-enumeration";
 const GLOBALS_UID = `plugin::${ID}.globals`;
-const CONFIGS = `plugin.${ID}`;
+const CONFIGS = `plugin::${ID}`;
 const ENUMERATION_CONTENT_TYPE = `plugin::${ID}.dynamic-enumeration-data`;
 const PROVIDER = `plugin::${ID}.dynamic-enumeration-provider`;
 const QUEUE_SERVICE = `plugin::${ID}.dynamic-enumeration-queue`;
@@ -13,6 +15,12 @@ const REDUCER_LOADING_VALUES = ID + "/set-loading-values";
 const REDUCER_RESET = ID + "/reset-data";
 const REDUCER_LOADED_VALUES = ID + "/update-field";
 const API_FIELD_OPTIONS = `${ID}/get-field-options`;
+
+const DEFAULT_CONFIGS: IPluginConfig = {
+  contentTypeVisible: false,
+  revalidateOnStart: process.env.NODE_ENV !== "development",
+  globals: {},
+};
 
 export default {
   ID,
@@ -29,4 +37,5 @@ export default {
   REDUCER_LOADING_VALUES,
   REDUCER_RESET,
   API_FIELD_OPTIONS,
+  DEFAULT_CONFIGS,
 };

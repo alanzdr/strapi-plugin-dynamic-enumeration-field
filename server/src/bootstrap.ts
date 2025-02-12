@@ -1,9 +1,9 @@
 import subscribeLifecycle from "./modules/Lifecycle";
-import revalidateData from "./modules/Revalidate";
+import executeRevalidate from "./modules/Revalidate";
 import type { Core } from "@strapi/strapi";
 
-const bootstrap = ({ strapi }: { strapi: Core.Strapi }) => {
-  revalidateData(strapi);
+const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
+  await executeRevalidate(strapi);
   subscribeLifecycle(strapi);
 };
 

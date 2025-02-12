@@ -2,7 +2,11 @@
   "extends": "@strapi/typescript-utils/tsconfigs/server",
   "include": ["./src"],
   "compilerOptions": {
+    "tsBuildInfoFile": "./.tsbuildinfo",
     "rootDir": "../",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["./src/*"]
+    }
   }
 }

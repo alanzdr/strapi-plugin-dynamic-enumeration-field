@@ -1,4 +1,5 @@
 import CONSTANTS from "../../constants";
+import { Core } from "@strapi/strapi";
 
 function getContentTypeParams(contentType) {
   const query = {
@@ -139,7 +140,7 @@ function getPluginFieldsData(
   return dynamicData;
 }
 
-async function getCollectionsData(strapi, contentTypes) {
+async function getCollectionsData(strapi: Core.Strapi, contentTypes) {
   let dynamicData = {};
 
   const localeService = strapi.service("plugin::i18n.locales");

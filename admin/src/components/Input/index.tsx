@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { ComboboxOption, Combobox, Field } from "@strapi/design-system";
 import {
   unstable_useContentManagerContext as useContentManagerContext,
   FieldValue,
   InputProps,
+  useStrapiApp,
 } from "@strapi/strapi/admin";
 
 import useEnumerationData from "../../hooks/use-enumeration-data";
@@ -34,17 +35,21 @@ const Input = React.forwardRef<any, Props>(
     ref
   ) => {
     const { contentType, model, form } = useContentManagerContext();
+    const [isFormChanged, setIsFormChanged] = useState(false);
+
+    const isSubmitting = (form as any).isSubmitting ?? false;
 
     const { formatMessage } = useIntl();
 
     const currentField = useFieldIdentifier({
       contentType,
-      currentData: form.values,
+      currentData: (form as any).values,
       apiUid: model,
       name,
       options: attribute.options,
     });
-    const { values, addValue } = useEnumerationData(currentField);
+
+    const { values, addValue, resetValues } = useEnumerationData(currentField);
 
     const errorMessage = error
       ? formatMessage({ id: error, defaultMessage: error })
@@ -54,10 +59,19 @@ const Input = React.forwardRef<any, Props>(
       onChange(name, value);
     };
 
-    const handleCreateOption = (value: any) => {
+    const handleCreateOption = (value: string) => {
       onChange(name, value);
       addValue(value);
     };
+
+    useEffect(() => {
+      if (isSubmitting) {
+        setIsFormChanged(true);
+      } else if (!isSubmitting && isFormChanged) {
+        setIsFormChanged(false);
+        resetValues();
+      }
+    }, [isSubmitting, isFormChanged, resetValues]);
 
     useEffect(() => {
       const element = document.getElementById(name) as HTMLInputElement;
@@ -75,6 +89,7 @@ const Input = React.forwardRef<any, Props>(
       >
         <Field.Label>{label}</Field.Label>
         <Combobox
+          ref={ref}
           id={name}
           name={name}
           onChange={handleChange}

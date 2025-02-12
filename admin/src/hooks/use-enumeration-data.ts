@@ -4,10 +4,13 @@ import { useFetchClient } from "@strapi/strapi/admin";
 
 import CONSTANTS from "../constants";
 import { getFieldState } from "../reducers";
+import { IReducerState } from "../types";
 
 const useEnumerationData = (field: any) => {
   const dispatch = useDispatch();
-  const state = useSelector((state) => getFieldState(state, field));
+  const state = useSelector((state: IReducerState) =>
+    getFieldState(state, field)
+  );
 
   const [isLoading, setLoading] = useState(false);
 
@@ -46,19 +49,28 @@ const useEnumerationData = (field: any) => {
     }
   }, [fetchClient, field]);
 
+  const resetValues = useCallback(() => {
+    dispatch({
+      type: CONSTANTS.REDUCER_RESET,
+      data: {
+        field,
+      },
+    });
+  }, []);
+
   useEffect(() => {
-    if (!isLoading && !state.isLoading && !state.isLoaded) {
+    if (!isLoading && !state?.isLoading && !state?.isLoaded) {
       loadData();
     }
   }, [state, isLoading, field, loadData]);
 
   const addNewValue = useCallback(
-    (value: any) => {
+    (value: string) => {
       dispatch({
         type: CONSTANTS.REDUCER_ADD_VALUE,
         data: {
           field,
-          value,
+          values: [value],
         },
       });
     },
@@ -66,8 +78,9 @@ const useEnumerationData = (field: any) => {
   );
 
   return {
-    values: state.values || [],
+    values: state?.values ?? [],
     addValue: addNewValue,
+    resetValues,
   };
 };
 

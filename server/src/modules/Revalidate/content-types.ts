@@ -1,8 +1,9 @@
 import CONSTANTS from "../../constants";
+import { Core, UID } from "@strapi/strapi";
 
 function getAttributesFields(
-  uid,
-  strapi,
+  uid: UID.Schema,
+  strapi: Core.Strapi,
   attributes,
   type = "api",
   repeatable = true
@@ -83,13 +84,13 @@ function getAttributesFields(
   return fields;
 }
 
-function getContentTypes(strapi) {
+function getContentTypes(strapi: Core.Strapi) {
   const contentTypes = [];
 
   // APIS
-  const apis = strapi.container.get("apis").getAll();
+  const apis = strapi.apis;
   for (const apiKey of Object.keys(apis)) {
-    const fullContentType = apis[apiKey].contentTypes[apiKey];
+    const fullContentType = apis[apiKey].contentTypes[apiKey] as any;
     if (!fullContentType || !fullContentType.attributes) continue;
 
     const fields = getAttributesFields(
