@@ -5,7 +5,6 @@ import {
   unstable_useContentManagerContext as useContentManagerContext,
   FieldValue,
   InputProps,
-  useStrapiApp,
 } from "@strapi/strapi/admin";
 
 import useEnumerationData from "../../hooks/use-enumeration-data";
@@ -59,9 +58,11 @@ const Input = React.forwardRef<any, Props>(
       onChange(name, value);
     };
 
-    const handleCreateOption = (value: string) => {
-      onChange(name, value);
-      addValue(value);
+    const handleCreateOption = (value?: string) => {
+      if (value) {
+        addValue(value);
+        onChange(name, value);
+      }
     };
 
     useEffect(() => {

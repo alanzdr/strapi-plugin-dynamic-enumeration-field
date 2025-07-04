@@ -1,14 +1,15 @@
 import { IPluginConfig } from "./types";
+import type { UID } from '@strapi/strapi'
 
 const ID = "dynamic-enumeration";
 const GLOBALS_UID = `plugin::${ID}.globals`;
 const CONFIGS = `plugin::${ID}`;
 const ENUMERATION_CONTENT_TYPE = `plugin::${ID}.dynamic-enumeration-data`;
-const PROVIDER = `plugin::${ID}.dynamic-enumeration-provider`;
-const QUEUE_SERVICE = `plugin::${ID}.dynamic-enumeration-queue`;
 const FIELD_NAME = "dynamic-field";
 const FIELD_FULL_NAME = `plugin::${ID}.${FIELD_NAME}`;
-
+// Services
+const QUEUE_SERVICE = `plugin::${ID}.dynamic-enumeration-queue` as UID.Service;
+const PROVIDER = `plugin::${ID}.dynamic-enumeration-provider` as UID.Service;
 // Frontend Constants
 const REDUCER_ADD_VALUE = ID + "/add-field";
 const REDUCER_LOADING_VALUES = ID + "/set-loading-values";

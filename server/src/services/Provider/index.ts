@@ -1,18 +1,23 @@
+import { UID } from "@strapi/strapi";
+import { IEnumeration, IEnumerationEntity, IEnumerationInfo, IEnumerationValue } from "~/types";
+
 const contentType = "plugin::dynamic-enumeration.dynamic-enumeration-data";
 
-const dynamicEnumProvider = ({ strapi }) => ({
-  async getEnumeration({ uid, name, locale }) {
+import CONSTANTS from "../../constants";
+
+class ProviderService {
+  async getEnumeration({ name, uid, locale }: IEnumerationInfo) {
     const response = await strapi.db.query(contentType).findOne({
-      // uid syntax: 'api::api-name.content-type-name'
       where: {
         uid,
         name,
         ...(locale ? { locale } : {}),
       },
     });
-    return response;
-  },
-  async getEnumerationValues({ uid, name, locale }, createIfNotExists = true) {
+    return response as IEnumerationEntity | null;
+  }
+
+  async getEnumerationValues({ uid, name, locale }: IEnumerationInfo, createIfNotExists = true) {
     const response = await this.getEnumeration({ uid, name, locale });
 
     if (!response && createIfNotExists) {
@@ -21,10 +26,10 @@ const dynamicEnumProvider = ({ strapi }) => ({
     }
 
     return response?.values || [];
-  },
-  async queryFields({ uid, namesIn, locale }) {
+  }
+
+  async queryFields(uid: UID.ContentType, namesIn: string[], locale?: string) {
     const response = await strapi.db.query(contentType).findMany({
-      // uid syntax: 'api::api-name.content-type-name'
       where: {
         uid,
         name: { $in: namesIn },
@@ -32,18 +37,20 @@ const dynamicEnumProvider = ({ strapi }) => ({
       },
     });
     return response;
-  },
-  async createData({ uid, name, locale, values }) {
-    await strapi.db.query(contentType).create({
+  }
+
+  async createData({ uid, name, values, locale }: IEnumeration) {
+    return (await strapi.db.query(contentType).create({
       data: {
         uid,
         name,
         values,
         ...(locale ? { locale } : {}),
       },
-    });
-  },
-  async updateValues(id, values) {
+    })) as IEnumerationEntity;
+  }
+
+  async updateValues(id: number, values: IEnumerationValue[]) {
     await strapi.db.query(contentType).update({
       where: {
         id,
@@ -52,7 +59,13 @@ const dynamicEnumProvider = ({ strapi }) => ({
         values,
       },
     });
-  },
-});
+  }
 
-export default dynamicEnumProvider;
+  public static getInstance(): ProviderService {
+    return strapi.service(CONSTANTS.PROVIDER) as ProviderService; 
+  }
+
+}
+
+
+export default ProviderService;

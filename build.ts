@@ -11,6 +11,7 @@ const viteConfig: Config = {
   exports: {},
 };
 
+
 const execute = async () => {
   const serverFiles = pkg.exports["./strapi-server"];
   const adminFiles = pkg.exports["./strapi-admin"];

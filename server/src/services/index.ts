@@ -1,9 +1,9 @@
-import dynamicEnumProvider from "./Provider";
-import dynamicEnumQueue from "./Queue";
+import ProviderService from "./Provider";
+import QueueService from "./Queue";
 import dynamicEnumInterface from "./Interface";
 
 export default {
-  "dynamic-enumeration-provider": dynamicEnumProvider,
-  "dynamic-enumeration-queue": dynamicEnumQueue,
+  "dynamic-enumeration-provider": new ProviderService(),
+  "dynamic-enumeration-queue": new QueueService(),
   "dynamic-enumeration-service": dynamicEnumInterface,
 };

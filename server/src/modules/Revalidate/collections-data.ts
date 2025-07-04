@@ -3,7 +3,7 @@ import { Core } from "@strapi/strapi";
 
 function getContentTypeParams(contentType) {
   const query = {
-    select: [],
+    fields: [],
     populate: {},
   };
 
@@ -12,11 +12,11 @@ function getContentTypeParams(contentType) {
   }
 
   for (const field of contentType.values) {
-    query.select.push(field);
+    query.fields.push(field);
   }
 
   for (const globalKey of Object.keys(contentType.globals)) {
-    query.select.push(contentType.globals[globalKey]);
+    query.fields.push(contentType.globals[globalKey]);
   }
 
   for (const childKey of Object.keys(contentType.children)) {
@@ -143,8 +143,9 @@ function getPluginFieldsData(
 async function getCollectionsData(strapi: Core.Strapi, contentTypes) {
   let dynamicData = {};
 
-  const localeService = strapi.service("plugin::i18n.locales");
-  const defaultLocale = await localeService.getDefaultLocale();
+  const localeService = strapi.plugins.i18n.services.locales
+  const defaultLocale = await localeService.getDefaultLocale()
+  const locales = await localeService.find()
 
   for (const contentType of contentTypes) {
     const queryParams = getContentTypeParams(contentType.fields);
@@ -152,21 +153,30 @@ async function getCollectionsData(strapi: Core.Strapi, contentTypes) {
       continue;
     }
 
-    const queryData = await strapi.db.query(contentType.uid).findMany({
-      ...queryParams,
-      select: [
-        ...queryParams.select,
-        ...(contentType.localized ? ["locale"] : []),
-      ],
-    });
+    for (const locale of locales) {
+      if (!contentType.localized && locale.code !== defaultLocale) {
+        continue;
+      }
 
-    dynamicData = getPluginFieldsData(
-      contentType.localized,
-      defaultLocale,
-      contentType.fields,
-      queryData,
-      dynamicData
-    );
+      const queryData = await strapi.documents(contentType.uid).findMany({
+        ...queryParams,
+        fields: [
+          ...queryParams.fields,
+          ...(contentType.localized ? ["locale"] : []),
+        ],
+        status: "published",
+        locale: locale.code,
+      });
+  
+      dynamicData = getPluginFieldsData(
+        contentType.localized,
+        defaultLocale,
+        contentType.fields,
+        queryData,
+        dynamicData
+      );
+    }
+
   }
 
   return dynamicData;
