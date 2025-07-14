@@ -50,6 +50,17 @@ class ProviderService {
     })) as IEnumerationEntity;
   }
 
+  public async createEnumeration(entity: IEnumerationInfo) {
+    return (await strapi.db.query(contentType).create({
+      data: {
+        uid: entity.uid,
+        name: entity.name,
+        values: [],
+        ...(entity.locale ? { locale: entity.locale } : {}),
+      },
+    })) as IEnumerationEntity;
+  }
+
   async updateValues(id: number, values: IEnumerationValue[]) {
     await strapi.db.query(contentType).update({
       where: {

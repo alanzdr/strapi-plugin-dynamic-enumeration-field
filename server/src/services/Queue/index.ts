@@ -52,7 +52,13 @@ class QueueService {
     queue.running = true;
 
     if (!Object.prototype.hasOwnProperty.call(queue.entity, 'id')) {
-      queue.entity = await this.provider.getEnumeration(queue.entity);
+      let entity = await this.provider.getEnumeration(queue.entity);
+
+      if (!entity) {
+        entity = await this.provider.createEnumeration(queue.entity);
+      }
+
+      queue.entity = entity;
     }
 
     while (queue.events.length > 0) {
