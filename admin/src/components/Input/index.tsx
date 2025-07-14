@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useIntl } from "react-intl";
 import { ComboboxOption, Combobox, Field } from "@strapi/design-system";
+
 import {
   unstable_useContentManagerContext as useContentManagerContext,
   FieldValue,
   InputProps,
 } from "@strapi/strapi/admin";
-
-import { useForm, createRulesEngine } from '@strapi/strapi/admin';
 
 import useEnumerationData from "../../hooks/use-enumeration-data";
 import useFieldIdentifier from "../../hooks/use-field-identifier";
@@ -31,14 +30,12 @@ const Input = React.forwardRef<any, Props>(
       attribute,
       value,
       error,
-      onChange,
+      onChange
     },
     ref
   ) => {
     const { contentType, model, form } = useContentManagerContext();
     const [isFormChanged, setIsFormChanged] = useState(false);
-
-    const fieldValues = useForm('Fields', (state) => state.values);
 
 
     const isSubmitting = (form as any).isSubmitting ?? false;

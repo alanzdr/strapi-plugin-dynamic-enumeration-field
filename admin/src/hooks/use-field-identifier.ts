@@ -1,7 +1,19 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import CONSTANTS from "../constants";
 import { useIntl } from "react-intl";
+
+import { useDispatch, useSelector } from "react-redux";
+import { useQueryParams } from "@strapi/strapi/admin";
+
+interface I18nBaseQuery {
+  plugins?: {
+    i18n?: {
+      locale?: string;
+    };
+  };
+}
+
 
 function useFieldIdentifier({
   contentType,
@@ -10,7 +22,10 @@ function useFieldIdentifier({
   name,
   options,
 }: any) {
-  const { locale } = useIntl();
+  const { locale: intlLocale } = useIntl();
+  const [{ query }] = useQueryParams<I18nBaseQuery>();
+
+  const locale = useMemo(() => query?.plugins?.i18n?.locale ?? intlLocale , [intlLocale])
 
   return React.useMemo(() => {
     const nameParts = name.split(".");
