@@ -48,17 +48,21 @@ class QueueService {
     return queue
   }
 
+  private async getEntityData(info: IEnumerationInfo): Promise<IEnumerationEntity> {
+    let entity = await this.provider.getEnumeration(info);
+
+    if (!entity) {
+      entity = await this.provider.createEnumeration(info);
+    }
+
+    return entity;
+  }
+
   private async runQueue(queue: IQueue) {
     queue.running = true;
 
     if (!Object.prototype.hasOwnProperty.call(queue.entity, 'id')) {
-      let entity = await this.provider.getEnumeration(queue.entity);
-
-      if (!entity) {
-        entity = await this.provider.createEnumeration(queue.entity);
-      }
-
-      queue.entity = entity;
+      queue.entity = await this.getEntityData(queue.entity);
     }
 
     while (queue.events.length > 0) {
@@ -104,6 +108,31 @@ class QueueService {
 
   public static getInstance(): QueueService {
     return strapi.service(CONSTANTS.QUEUE_SERVICE) as QueueService; 
+  }
+
+  private cleanQueueEntity(id: number) {
+    for (const [key, queue] of this.queueMap.entries()) {
+      if (queue.entity && (queue.entity as IEnumerationEntity).id === id) {
+        this.queueMap.delete(key);
+      }
+    }
+  }
+
+  public register() {
+    const clearQueue = this.cleanQueueEntity.bind(this);
+
+    strapi.db.lifecycles.subscribe({
+      models: [CONSTANTS.ENUMERATION_CONTENT_TYPE],
+      async afterDelete(event) {
+        const { result } = event;
+
+        if (!result || !result.id) {
+          return
+        }
+
+        clearQueue(result.id);
+      },
+    })
   }
 }
 

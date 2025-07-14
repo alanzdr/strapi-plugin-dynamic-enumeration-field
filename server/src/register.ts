@@ -1,5 +1,7 @@
 import CONSTANTS from "./constants";
 
+import QueueService from './services/Queue'
+
 async function setEnumerationVisibility(strapi) {
   const config = await strapi.config.get(CONSTANTS.CONFIGS);
   if (!config.contentTypeVisible) {
@@ -24,6 +26,9 @@ const register = async ({ strapi }) => {
 
   // Set Enumeration Content Type Visibility if setted
   await setEnumerationVisibility(strapi);
+
+  const queueService = QueueService.getInstance();
+  queueService.register();
 };
 
 export default register;

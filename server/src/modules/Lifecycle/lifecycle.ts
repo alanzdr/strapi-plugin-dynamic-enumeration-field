@@ -111,11 +111,6 @@ class Lifecycle {
       status: 'published'
     })
 
-    console.log(inspect({
-      current,
-      data
-    }, false, 10, true));
-
     const deleteQueue = this.prepareQueue(uid, current, locale);
 
     const deletePromises = deleteQueue.map(async (element) => {
