@@ -1,9 +1,7 @@
 import { Struct, UID } from "@strapi/strapi";
 import LifeCycleMutation from "./mutation";
-import LifecycleProvider from "./provider";
 
 import { populateSchema } from '../../utils/populate'
-import { inspect } from "util";
 
 interface IQueueElements {
   data: any;
@@ -11,19 +9,14 @@ interface IQueueElements {
   locale?: string;
 }
 
+
 class Lifecycle {
+  private deletedEntriesKeys = new Set<string>();
+
   private async executeQueue({ data, model, locale }: IQueueElements, remove?: boolean) {
-    const provider = new LifecycleProvider(model)
-    
-    if (!provider.fieldNames || provider.fieldNames.length === 0) {
-      return;
-    }
-
-    const mutationHandler = new LifeCycleMutation(provider);
-
+    const mutationHandler = new LifeCycleMutation(model);
     await mutationHandler.mutate(data, locale, remove);
   }
-
 
   public prepareQueue(uid: UID.Schema, data: any, locale?: string) {
     const queue: IQueueElements[] = []
@@ -122,26 +115,52 @@ class Lifecycle {
     await this.afterCreate(uid, data); 
   }
 
-  public async beforeDelete(uid: UID.ContentType, id: number) {
-    const { populate } = populateSchema(uid);
+  private async executeDeleteQueue(
+    uid: UID.ContentType, 
+    data: any,
+    locale: string
+  ) {
+    const queue = this.prepareQueue(uid, data, locale);
 
-    const data = await strapi.db.query(uid).findOne({
-      where: { id },
-      populate,
-    });
-    
-    const model = strapi.getModel(uid);
-    if (model.options.draftAndPublish && !data.publishedAt) {
-      return
-    }
-
-    const queue = this.prepareQueue(uid, data, data.locale);
-    
     const promises = queue.map(async (element) => {
       await this.executeQueue(element, true);
     });
 
     await Promise.all(promises); 
+  }
+
+  public async beforeDelete(uid: UID.ContentType, documentId: string, locale: string) {
+    const { populate } = populateSchema(uid);
+
+    // Get data before verify multiples because strapi has a 
+    // bug that get error if a published and draft event has 
+    // different execution time
+    const data = await strapi.documents(uid).findOne({
+      documentId,
+      locale,
+      populate: populate as any,
+      status: 'published'
+    })
+
+    if (!data) {
+      return
+    }
+
+    const entryKey = `${uid}-${documentId}-${locale}`;
+
+    if (this.deletedEntriesKeys.has(entryKey)) {
+      return
+    }
+    
+    this.deletedEntriesKeys.add(entryKey);
+    void this.executeDeleteQueue(uid, data, locale);
+
+    
+    // keep the key for 60 seconds to avoid multiple deletions
+    setTimeout(() => {
+      this.deletedEntriesKeys.delete(entryKey);
+    }, 60 * 1000);
+    
   }
 }
 

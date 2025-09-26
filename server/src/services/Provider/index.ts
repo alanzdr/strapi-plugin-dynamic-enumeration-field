@@ -11,7 +11,7 @@ class ProviderService {
       where: {
         uid,
         name,
-        ...(locale ? { locale } : {}),
+        locale
       },
     });
     return response as IEnumerationEntity | null;
@@ -33,7 +33,7 @@ class ProviderService {
       where: {
         uid,
         name: { $in: namesIn },
-        ...(locale ? { locale } : {}),
+        locale
       },
     });
     return response;
@@ -45,7 +45,7 @@ class ProviderService {
         uid,
         name,
         values,
-        ...(locale ? { locale } : {}),
+        locale
       },
     })) as IEnumerationEntity;
   }
@@ -56,7 +56,7 @@ class ProviderService {
         uid: entity.uid,
         name: entity.name,
         values: [],
-        ...(entity.locale ? { locale: entity.locale } : {}),
+        locale: entity.locale
       },
     })) as IEnumerationEntity;
   }

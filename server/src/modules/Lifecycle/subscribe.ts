@@ -1,25 +1,35 @@
+
 import  CONSTANTS from '~/constants';
-import { inspect } from "util";
 import LifecycleModule from "./lifecycle";
-import { populateSchema } from "~/utils/populate";
 import { Core, UID } from '@strapi/strapi';
 
 const EVENTS = [
   "afterCreate",
   "beforeDelete",
-  "beforeUpdate",
-  "afterUpdate",
 ];
 
 const lifecycle = new LifecycleModule();
 
+
 function subscribe(strapi: Core.Strapi) {
 
   strapi.documents.use(async (ctx, next) => {
-    if (ctx.action === 'update') {
+    const uid = ctx.uid as UID.ContentType;
+    const action = ctx.action 
+    
+    if (action === 'update') {
       const { data, documentId, locale } = ctx.params
-      await lifecycle.update(ctx.uid, documentId, data, locale);
+      await lifecycle.update(uid, documentId, data, locale);
     }
+
+    if (action === 'delete' || action === 'unpublish') {     
+      const documentId = ctx.params.documentId;
+      const locale = ctx.params.locale;
+      await lifecycle.beforeDelete(uid, documentId, locale);
+    }
+
+    // TODO: handle create and publish actions here too
+
     return await next()
   })
 
@@ -30,8 +40,6 @@ function subscribe(strapi: Core.Strapi) {
 
     const uid = event.model.uid as UID.ContentType;
     if (!uid || !(uid.startsWith("api") || uid.startsWith("plugin"))) {
-      
-      
       return
     } 
 
@@ -39,15 +47,9 @@ function subscribe(strapi: Core.Strapi) {
       return
     }
 
-
     switch (event.action) {
       case "afterCreate": {
         await lifecycle.afterCreate(uid, event.result)
-        return;
-      }
-      case "beforeDelete": {
-        const id = Number(event.params?.where?.id);
-        await lifecycle.beforeDelete(uid, id)
         return;
       }
       default: {

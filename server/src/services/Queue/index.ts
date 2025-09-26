@@ -1,22 +1,21 @@
-import type { UID } from '@strapi/strapi'
 import CONSTANTS from "../../constants";
 import { IEnumerationEntity, IEnumerationInfo } from '~/types';
 import ProviderService from '../Provider';
 
-interface IQueueEvent {
-  function: (entity: IEnumerationEntity) => Promise<IEnumerationEntity> | IEnumerationEntity;
-  resolve: () => void;
-  reject: (error: Error) => void;
-}
+type IQueueEventCallback = (entity: IEnumerationEntity) => IEnumerationEntity;
 
 interface IQueue {
+  key: string
   running: boolean;
+  mutated: boolean;
   entity: IEnumerationEntity | IEnumerationInfo;
-  events: IQueueEvent[];
+  events: IQueueEventCallback[];
 }
 
 class QueueService {
   private queueMap: Map<string, IQueue>;
+  private defaultLocale: string | null = null;
+
 
   constructor () {
     this.queueMap = new Map();
@@ -27,7 +26,7 @@ class QueueService {
   }
 
   private getEnumerationKey({name, uid, locale}: IEnumerationInfo): string {
-    return `${uid}::${name}${locale ? `::${locale}` : ''}`;
+    return `${uid}::${name}::${locale}`;
   }
 
   private getQueue(entity: IEnumerationInfo): IQueue {
@@ -37,7 +36,9 @@ class QueueService {
 
     if (!queue) {
       queue = {
+        key: queueKey,
         running: false,
+        mutated: false,
         entity,
         events: [],
       }
@@ -58,7 +59,11 @@ class QueueService {
     return entity;
   }
 
-  private async runQueue(queue: IQueue) {
+  private async executeQueue(queue: IQueue) {
+    if (queue.running || queue.events.length === 0) {
+      return;
+    }
+
     queue.running = true;
 
     if (!Object.prototype.hasOwnProperty.call(queue.entity, 'id')) {
@@ -66,44 +71,41 @@ class QueueService {
     }
 
     while (queue.events.length > 0) {
-      const event = queue.events.shift();
+      const mutateEvent = queue.events.shift();
 
-      if (!event) {
+      if (!mutateEvent) {
         continue;
       }
 
       try {
-        queue.entity = await Promise.resolve(event.function(queue.entity as IEnumerationEntity));
-        event.resolve();
+        queue.entity = mutateEvent(queue.entity as IEnumerationEntity);
+        queue.mutated = true;
       } catch (error) {
         console.error(error);
-        event.reject(error);
       }
-      
     }
 
-    const enumerationKey = this.getEnumerationKey(queue.entity as IEnumerationInfo);
-    queue.running = false;
-    this.queueMap.set(enumerationKey, queue);
     
-    const { id, values } = queue.entity as IEnumerationEntity;
-    await this.provider.updateValues(id, values);
+    queue.running = false;
   }
 
-  public async execute(entity: IEnumerationInfo, eventFunction: IQueueEvent['function']): Promise<void> {
+  public add(entity: IEnumerationInfo, eventCallback: IQueueEventCallback) {
     const queue = this.getQueue(entity);
-    
-    return new Promise((resolve, reject) => {
-      queue.events.push({
-        function: eventFunction,
-        resolve,
-        reject,
-      });
+    queue.events.push(eventCallback);
+  }
 
-      if (!queue.running) {
-        this.runQueue(queue);
+  public async execute() {
+    const queues = Array.from(this.queueMap.values());
+
+    for (const queue of queues) {
+      await this.executeQueue(queue);
+      if (queue.mutated && Object.prototype.hasOwnProperty.call(queue.entity, 'id')) {
+      
+        const { id, values } = queue.entity as IEnumerationEntity;
+        await this.provider.updateValues(id, values);
+        queue.mutated = false;
       }
-    });
+    }
   }
 
   public static getInstance(): QueueService {
@@ -133,6 +135,25 @@ class QueueService {
         clearQueue(result.id);
       },
     })
+  }
+
+  private async getDefaultLocale() {
+    if (this.defaultLocale) {
+      return this.defaultLocale;
+    }
+
+    const localeService = strapi.plugins.i18n.services.locales
+    this.defaultLocale = await localeService.getDefaultLocale()
+
+    return this.defaultLocale;
+  }
+
+  public async getLocale(dataLocale?: string) {
+    if (dataLocale) {
+      return dataLocale;
+    }
+
+    return this.getDefaultLocale();
   }
 }
 

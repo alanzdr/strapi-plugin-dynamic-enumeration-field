@@ -1,16 +1,21 @@
 import QueueService from "~/services/Queue";
+import { Struct, UID } from "@strapi/strapi";
 
-import LifecycleProvider from "./provider";
 import { IEnumerationEntity, IEnumerationInfo } from "~/types";
-import { inspect } from "util";
+import CONSTANTS from "../../constants";
 
+interface IEnumerationToMutate extends IEnumerationInfo {
 
+  value: string;
+}
 
 class LifeCycleMutation {
+  private uid: UID.ContentType;
   private queue: QueueService;
 
-  constructor(private provider: LifecycleProvider) {
+  constructor(private model: Struct.Schema) {
     this.queue = QueueService.getInstance();
+    this.uid = model.uid as UID.ContentType;
   }
   
   private addEnumerationValue(enumeration: IEnumerationEntity, content: string) {
@@ -50,33 +55,62 @@ class LifeCycleMutation {
     return enumeration
   }
 
-  public async mutate(data: any, locale?: string, remove = false) {
-    let promises: Promise<void>[] = [];
+  private async getEnumerations(data: any, dataLocale?: string): Promise<IEnumerationToMutate[]> {
+    const enumerations: IEnumerationToMutate[] = [];
+    const locale = await this.queue.getLocale(dataLocale)
 
-    for (const fieldName of this.provider.fieldNames) {
-      const enumeration: IEnumerationInfo = {
-        uid: this.provider.uid,
-        name: fieldName,
-        locale,
-      }
+    const fieldKeys = Object.entries(this.model.attributes)
+      .filter(([key, value]) => {
+        return (value as any).customField === CONSTANTS.FIELD_FULL_NAME;
+      })
+      .map(([key]) => key);
 
-      const value = data[fieldName];
-
+    for (const key of fieldKeys) {
+      const value = data[key];
       if (!value || typeof value !== "string") {
         continue
-      } 
+      }
 
-      const queue = this.queue.execute(enumeration, (current) => {
+      const options = (this.model.attributes as any)[key]?.options;
+      if (options && options.global) {
+        enumerations.push({
+          value,
+          uid: CONSTANTS.GLOBALS_UID,
+          name: options.global,
+          locale,
+        })
+      } else {
+        enumerations.push({
+          value,
+          uid: this.uid,
+          name: key,
+          locale,
+        })
+      }
+    }
+
+    return enumerations
+  }
+
+  public async mutate(data: any, dataLocale?: string, remove = false) {
+    const enumerations =  await this.getEnumerations(data, dataLocale);
+
+    for (const enumeration of enumerations) {
+      const {
+        value,
+        ...info
+      } = enumeration;
+
+      this.queue.add(info, (current) => {
         if (remove) {
           return this.removeEnumerationValue(current, value);
         }
-        return this.addEnumerationValue(current, value)
+        return this.addEnumerationValue(current, value);
       })
 
-      promises.push(queue);
     }
 
-    await Promise.all(promises);
+    await this.queue.execute();
   }
 
 

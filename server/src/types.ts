@@ -14,7 +14,7 @@ export interface IEnumerationValue {
 export interface IEnumerationInfo {
   uid: UID.Schema;
   name: string;
-  locale?: string;
+  locale: string;
 }
 
 export interface IEnumeration extends IEnumerationInfo {

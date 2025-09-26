@@ -2,7 +2,7 @@ import { IPluginConfig } from "./types";
 import type { UID } from '@strapi/strapi'
 
 const ID = "dynamic-enumeration";
-const GLOBALS_UID = `plugin::${ID}.globals`;
+const GLOBALS_UID = `plugin::${ID}.globals` as UID.ContentType;
 const CONFIGS = `plugin::${ID}`;
 const ENUMERATION_CONTENT_TYPE = `plugin::${ID}.dynamic-enumeration-data`;
 const FIELD_NAME = "dynamic-field";
