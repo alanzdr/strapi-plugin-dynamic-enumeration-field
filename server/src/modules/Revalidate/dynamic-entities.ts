@@ -86,9 +86,9 @@ async function updateDynamicEntities(strapi: Core.Strapi, collectionsData) {
     }
   }
 
-  const promises = Array.from(parallelPromises.values());
+  const promises = Array.from(parallelPromises.values()).flat();
 
-  await Promise.all(promises.map((promises) => Promise.all(promises)));
+  await Promise.all(promises);
 }
 
 export default updateDynamicEntities;
